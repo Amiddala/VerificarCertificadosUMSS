@@ -1,10 +1,9 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import Encabezado from './components/Encabezado.jsx';
+import { INSTITUCION } from './config.js';
 import Buscador from './pages/Buscador.jsx';
-import Verificar from './pages/Verificar.jsx';
 import NoEncontrado from './pages/NoEncontrado.jsx';
-
-const INSTITUCION = 'Formación Continua UMSS';
-const TITULO_SITIO = 'Verificación de certificados';
+import Verificar from './pages/Verificar.jsx';
 
 export default function App() {
   return (
@@ -13,40 +12,22 @@ export default function App() {
         Saltar al contenido
       </a>
 
-      <header className="cabecera">
-        <div className="contenedor cabecera-contenido">
-          <Link
-            to="/"
-            className="marca"
-            aria-label={`${INSTITUCION} — ${TITULO_SITIO}. Ir al inicio`}
-          >
-            <span className="marca-logo" aria-hidden="true">
-              UMSS
-            </span>
-            <span className="marca-texto">
-              <strong>{INSTITUCION}</strong>
-              <span>— {TITULO_SITIO}</span>
-            </span>
-          </Link>
-        </div>
-      </header>
+      <div className="contenedor">
+        <Encabezado />
 
-      <main id="contenido" className="contenedor contenido" tabIndex={-1}>
-        <Routes>
-          <Route path="/" element={<Buscador />} />
-          <Route path="/verificar/:codigo" element={<Verificar />} />
-          <Route path="*" element={<NoEncontrado />} />
-        </Routes>
-      </main>
+        <main id="contenido" className="contenido" tabIndex={-1}>
+          <Routes>
+            <Route path="/" element={<Buscador />} />
+            <Route path="/verificar/:codigo" element={<Verificar />} />
+            <Route path="*" element={<NoEncontrado />} />
+          </Routes>
+        </main>
 
-      <footer className="pie">
-        <div className="contenedor">
-          <p>{INSTITUCION} · Consulta pública de certificados</p>
-          <p className="pie-nota">
-            Esta página solo consulta información. No crea, modifica ni elimina certificados.
-          </p>
-        </div>
-      </footer>
+        <footer className="pie">
+          <p>{INSTITUCION}</p>
+          <p>Consulta pública de autenticidad de certificados.</p>
+        </footer>
+      </div>
     </div>
   );
 }

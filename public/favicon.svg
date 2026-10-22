@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Verificación de certificados">
-  <rect width="64" height="64" rx="14" fill="#0b3b6f" />
-  <path d="M32 12 49 19v12c0 11-6.8 18.6-17 22-10.2-3.4-17-11-17-22V19l17-7Z" fill="#ffffff" opacity=".16" />
-  <path d="m23 32 6 6 12-13" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <rect width="64" height="64" rx="14" fill="#1D3557" />
+  <path d="M32 11 50 18.5v12.2c0 11.4-7 19.4-18 23.3-11-3.9-18-11.9-18-23.3V18.5L32 11Z" fill="#ffffff" opacity=".14" />
+  <path d="m22.5 32.5 6.3 6.3L42 24" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
