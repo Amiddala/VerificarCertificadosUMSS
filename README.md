@@ -23,6 +23,12 @@ Este sitio no forma parte de AdmCursosUMSS. Es un proyecto separado a propósito
 - PostgreSQL mediante una vista de solo lectura
 - Despliegue objetivo: Vercel
 
+## Tema visual
+
+La interfaz parte de los tokens del proyecto principal `AdmCursosUMSS` (`apps/client/src/index.css`): azul marino `#0C103C`, azul medio `#1D3557`, acento `#1E3A8A`, fondo `#F8FAFC` y estados verde/rojo institucionales. Todos los colores, radios, sombras y la tipografía están centralizados como variables CSS en `:root` dentro de `src/styles.css`, bajo nombres como `--color-primario`, `--color-exito`, `--color-error`, `--color-fondo` y `--radio`.
+
+El encabezado busca un logo opcional en `public/logo.png`. Si el archivo no existe, se muestra solo el nombre de la institución, sin imágenes rotas.
+
 ## Estructura
 
 ```text
@@ -35,12 +41,17 @@ VerificarCertificadosUMSS/
 │   ├── pages/Verificar.jsx
 │   ├── pages/NoEncontrado.jsx
 │   ├── components/BuscadorForm.jsx
+│   ├── components/Encabezado.jsx
 │   ├── components/ResultadoCertificado.jsx
 │   ├── services/api.js
+│   ├── utils/codigo.js
+│   ├── config.js
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── styles.css
-├── public/favicon.svg
+├── public/
+│   ├── favicon.svg
+│   └── logo.png (opcional)
 ├── index.html
 ├── vite.config.js
 ├── vercel.json
@@ -54,17 +65,20 @@ VerificarCertificadosUMSS/
 
 | Ruta | Descripción |
 | --- | --- |
-| `/` | Buscador. Campo de código y botón **Buscar**. Navega a `/verificar/:codigo`. |
-| `/verificar/:codigo` | Consulta automática del código. Es la ruta que abre el QR y mantiene el buscador visible. |
+| `/` | Pantalla inicial con el buscador y el botón **Verificar certificado**. Navega a `/verificar/:codigo`. |
+| `/verificar/:codigo` | Consulta automática del código. Es la ruta que abre el QR, funciona al recargar directamente y mantiene el buscador visible. |
 | `*` | Página 404 con enlace al inicio. |
 
 El resultado puede estar en estos estados:
 
-- **VÁLIDO** (verde): estudiante, curso, duración en horas, tipo de certificado, fecha de emisión en `dd/mm/aaaa` y código consultado.
-- **NO VÁLIDO / NO ENCONTRADO** (rojo): mensaje genérico, sin datos adicionales.
-- **Cargando**.
-- **Error de red o de servicio**: distinto del "no encontrado", con opción de reintentar.
+- **Certificado válido** (verde): estudiante, curso, horas académicas, tipo de certificado con badge, fecha de emisión en `dd/mm/aaaa`, institución emisora y código con botón para copiar.
+- **Certificado no encontrado** (rojo): mensaje genérico invitando a revisar el código.
+- **Cargando**: spinner y esqueleto de los datos.
+- **Formato inválido**: aviso bajo el input, sin llamar a la API.
+- **Error de red o de servicio**: distinto del "no encontrado", con botón **Reintentar**.
 - **Demasiadas consultas**: cuando la API responde `429`.
+
+En el resultado válido también puede aparecer el botón secundario **Visitar sitio web** cuando `VITE_SITIO_WEB_URL` tiene una URL válida. Se abre en la misma pestaña.
 
 ## API
 
@@ -209,9 +223,10 @@ postgresql://verificacion_ro:CLAVE@HOST:5432/BASE?sslmode=require
 | `USE_MOCK` | `true` fuerza datos de ejemplo. Si falta `DATABASE_URL`, también se usa mock. |
 | `DATABASE_SSL` | `true`/`false`. Por defecto `true`. |
 | `DATABASE_SSL_REJECT_UNAUTHORIZED` | `true`/`false`. Por defecto `true`. |
+| `VITE_SITIO_WEB_URL` | URL del botón **Visitar sitio web** en el resultado válido. Si falta o no es `http(s)`, el botón no se muestra. |
 | `BASE_URL` | Solo para `npm run qr`. Es la URL pública del sitio, sin `/` final. |
 
-`.env` está ignorado por git. Nunca subir credenciales.
+`.env` está ignorado por git. Nunca subir credenciales. Las variables que empiezan con `VITE_` se incluyen en el bundle del navegador, así que solo deben contener información pública como una URL institucional.
 
 ## Desplegar en Vercel
 
@@ -222,6 +237,7 @@ postgresql://verificacion_ro:CLAVE@HOST:5432/BASE?sslmode=require
    - `USE_MOCK=false`.
    - `DATABASE_SSL=true`.
    - `DATABASE_SSL_REJECT_UNAUTHORIZED=true` (o `false` solo si el proveedor lo exige).
+   - `VITE_SITIO_WEB_URL=https://www.umss.edu.bo` (opcional, para el botón **Visitar sitio web**).
 4. Volver a desplegar después de agregar o cambiar variables.
 5. Configurar el dominio público definitivo.
 6. Probar en producción:
@@ -298,11 +314,12 @@ Decisiones tomadas:
 
 - **Nombres SQL placeholder**: no se conocen aún las tablas/columnas reales de AdmCursosUMSS. La vista usa `certificados`, `inscripciones`, `estudiantes`, `grupos` y `cursos`, con `certificados.idInscripcion` como camino principal. Todo lo ajustable está marcado con `-- TODO`.
 - **Código exacto y sensible a mayúsculas**: la API consulta `codigo_qr = $1` sin transformar el valor, salvo `trim()` de espacios externos. Si en la base los códigos se guardan en mayúsculas, conviene imprimirlos siempre así.
-- **Formato inválido**: la API responde `400` y el frontend lo muestra como **NO VÁLIDO / NO ENCONTRADO**, con el detalle del formato permitido, sin navegar fuera del sitio.
+- **Formato inválido**: el frontend valida el código antes de navegar y antes de llamar a la API. El aviso aparece bajo el input y no se realiza ninguna solicitud.
 - **Mock automático**: si no hay `DATABASE_URL`, la API usa mock aunque `USE_MOCK` no esté definido. Esto evita fallos al clonar el proyecto.
 - **SSL seguro por defecto**: se valida el certificado del servidor. La opción de desactivar la validación queda documentada como excepción.
 - **Sin CORS**: no hace falta porque el frontend y la API comparten dominio; además reduce superficie de exposición.
-- **Sin logos**: la cabecera tiene un bloque `.marca-logo` con el texto `UMSS`, fácil de reemplazar por el logo institucional definitivo.
+- **Logo opcional**: el componente `Encabezado` comprueba si existe `public/logo.png`; si no existe, muestra únicamente el nombre de la institución. No se renderiza una imagen rota.
+- **Tema centralizado**: la identidad visual se tomó de AdmCursosUMSS y quedó como variables CSS en `:root`, para poder ajustarla en un solo archivo.
 - **Rate limit en memoria**: suficiente como primera barrera, pero no es global entre instancias.
 - **Sin librerías de UI**: solo React, React Router y CSS propio.
 - **El QR no crea datos**: solo codifica la URL de consulta.
@@ -314,6 +331,7 @@ Pendientes para el equipo:
 - Crear el rol `verificacion_ro` con una contraseña real y rotarla de forma segura.
 - Configurar `DATABASE_URL`, `USE_MOCK=false` y SSL en Vercel.
 - Configurar el dominio definitivo y actualizar `BASE_URL` para generar los QR.
-- Reemplazar el placeholder `UMSS` por el logo institucional si corresponde.
+- Colocar el logo institucional definitivo en `public/logo.png` si se quiere mostrar.
+- Definir `VITE_SITIO_WEB_URL` con la URL pública del sitio de Formación Continua UMSS.
 - Hacer una revisión visual y de accesibilidad con el equipo de diseño.
 - Evaluar rate limiting distribuido si el volumen o los ataques lo justifican.
