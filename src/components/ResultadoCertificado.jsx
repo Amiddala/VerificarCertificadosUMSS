@@ -116,7 +116,7 @@ export default function ResultadoCertificado({ certificado, codigo }) {
           <dd>{certificado.nombre_estudiante || '—'}</dd>
         </div>
 
-        <div className="dato-card">
+        <div className="dato-card dato-card-curso">
           <dt>Curso</dt>
           <dd>{certificado.nombre_curso || '—'}</dd>
         </div>

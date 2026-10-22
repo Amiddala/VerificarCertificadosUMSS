@@ -43,7 +43,7 @@
   --sombra: 0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 28px rgba(15, 23, 42, 0.06);
   --sombra-boton: 0 4px 12px rgba(29, 53, 87, 0.2);
   --transicion: 150ms ease;
-  --ancho-contenido: 480px;
+  --ancho-contenido: 100%;
   --alto-control: 48px;
 
   font-family: var(--fuente);
@@ -115,6 +115,14 @@ a {
 
 .contenido {
   flex: 1;
+}
+
+.encabezado,
+.tarjeta-principal,
+.tarjeta-buscador {
+  width: 100%;
+  max-width: var(--ancho-contenido);
+  margin-inline: auto;
 }
 
 .saltar-contenido {
@@ -798,14 +806,75 @@ a {
   .encabezado-marca {
     padding: 21px 24px;
   }
+}
 
+@media (min-width: 640px) {
   .datos-grid,
   .esqueleto-datos {
     grid-template-columns: 1fr 1fr;
   }
 
+  .dato-card-curso {
+    grid-column: 1 / -1;
+  }
+
   .esqueleto-datos span {
     height: 72px;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ancho-contenido: 720px;
+    --alto-control: 56px;
+  }
+
+  .contenedor {
+    gap: 24px;
+    padding-inline: 0;
+  }
+
+  .contenido {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pagina {
+    width: 100%;
+    gap: 24px;
+    margin-block: auto;
+  }
+
+  .card {
+    padding: 40px;
+  }
+
+  .encabezado-marca {
+    padding: 28px 40px;
+  }
+
+  .tarjeta-titulo {
+    font-size: 2rem;
+  }
+
+  .descripcion-tarjeta {
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .campo input {
+    min-height: 56px;
+    font-size: 1.05rem;
+  }
+
+  .boton {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --ancho-contenido: 840px;
   }
 }
 
