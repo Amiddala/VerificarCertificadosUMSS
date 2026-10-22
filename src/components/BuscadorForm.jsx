@@ -1,11 +1,19 @@
 import { useEffect, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  MENSAJE_CODIGO_INVALIDO,
+  MENSAJE_CODIGO_VACIO,
+  esCodigoValido,
+  normalizarCodigo,
+} from '../utils/codigo.js';
 
-const CODIGO_REGEX = /^[A-Za-z0-9_-]{6,64}$/;
-
-export default function BuscadorForm({ valorInicial = '' }) {
+export default function BuscadorForm({
+  valorInicial = '',
+  errorExterno = '',
+  textoBoton = 'Verificar certificado',
+}) {
   const [codigo, setCodigo] = useState(valorInicial);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(errorExterno);
   const navigate = useNavigate();
   const idCampo = useId();
   const idAyuda = `${idCampo}-ayuda`;
@@ -13,37 +21,47 @@ export default function BuscadorForm({ valorInicial = '' }) {
 
   useEffect(() => {
     setCodigo(valorInicial);
-    setError('');
-  }, [valorInicial]);
+    setError(errorExterno);
+  }, [valorInicial, errorExterno]);
 
   function manejarEnvio(evento) {
     evento.preventDefault();
-    const codigoLimpio = codigo.trim();
+    const codigoNormalizado = normalizarCodigo(codigo);
 
-    if (!codigoLimpio) {
-      setError('Ingresa el código de verificación que aparece debajo del QR.');
+    if (!codigoNormalizado) {
+      setError(MENSAJE_CODIGO_VACIO);
       return;
     }
 
-    if (!CODIGO_REGEX.test(codigoLimpio)) {
-      setError(
-        'El código debe tener entre 6 y 64 caracteres. Solo se permiten letras, números, guiones y guiones bajos.',
-      );
+    if (!esCodigoValido(codigoNormalizado)) {
+      setError(MENSAJE_CODIGO_INVALIDO);
       return;
     }
 
     setError('');
-    navigate(`/verificar/${encodeURIComponent(codigoLimpio)}`);
+    navigate(`/verificar/${encodeURIComponent(codigoNormalizado)}`);
   }
 
   return (
     <form className="buscador-form" onSubmit={manejarEnvio} noValidate>
       <div className="campo">
         <label htmlFor={idCampo}>Código de verificación</label>
-        <p className="campo-ayuda" id={idAyuda}>
-          Escríbelo tal como aparece impreso debajo del código QR.
-        </p>
-        <div className="fila-campo">
+        <span className="campo-ayuda" id={idAyuda}>
+          Lo encuentras impreso debajo del código QR del certificado.
+        </span>
+
+        <div className="campo-control">
+          <span className="campo-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.8" />
+              <path
+                d="m16 16 4 4"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
           <input
             id={idCampo}
             name="codigo"
@@ -55,26 +73,48 @@ export default function BuscadorForm({ valorInicial = '' }) {
                 setError('');
               }
             }}
-            placeholder="Ej.: DEMO-ASISTENCIA-2024"
+            placeholder="Ej.: A1B2-C3D4-EFGH"
             autoComplete="off"
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck="false"
             enterKeyHint="search"
             maxLength={64}
+            required
             aria-invalid={Boolean(error)}
             aria-describedby={error ? `${idAyuda} ${idError}` : idAyuda}
           />
-          <button type="submit" className="boton-primario">
-            Buscar
-          </button>
         </div>
+
         {error && (
           <p className="campo-error" id={idError} role="alert">
-            {error}
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.7" />
+              <path
+                d="M10 6.3v4.4"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="13.8" r="1" fill="currentColor" />
+            </svg>
+            <span>{error}</span>
           </p>
         )}
       </div>
+
+      <button type="submit" className="boton boton-primario boton-ancho">
+        {textoBoton}
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true">
+          <path
+            d="M5 12h14m-5-5 5 5-5 5"
+            stroke="currentColor"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
     </form>
   );
 }
