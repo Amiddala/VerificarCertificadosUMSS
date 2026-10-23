@@ -12,7 +12,7 @@ export async function verificarCertificado(codigo, { signal } = {}) {
   let respuesta;
 
   try {
-    respuesta = await fetch(`${RUTA_VERIFICACION}?codigo=${encodeURIComponent(codigo)}`, {
+    respuesta = await fetch(`${RUTA_VERIFICACION}/${encodeURIComponent(codigo)}`, {
       method: 'GET',
       headers: { Accept: 'application/json' },
       cache: 'no-store',
@@ -54,8 +54,8 @@ export async function verificarCertificado(codigo, { signal } = {}) {
     );
   }
 
-  if (respuesta.ok && datos?.valido === true && datos.certificado) {
-    return { estado: 'valido', certificado: datos.certificado };
+  if (respuesta.ok && datos?.valido === true) {
+    return { estado: 'valido', certificado: datos.certificado || datos };
   }
 
   if (respuesta.ok && datos?.valido === false) {
