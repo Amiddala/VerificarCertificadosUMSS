@@ -136,10 +136,19 @@ function normalizarCertificado(fila) {
   return {
     codigo_qr: fila.codigo_qr,
     nombre_estudiante: fila.nombre_estudiante,
+    ci_estudiante: fila.ci_estudiante || null,
     nombre_curso: fila.nombre_curso,
     horas: Number.isFinite(horas) ? horas : null,
+    tipo_codigo: fila.tipo_codigo || null,
     tipo_certificado: fila.tipo_certificado,
+    fecha_inicio: fila.fecha_inicio ? String(fila.fecha_inicio).slice(0, 10) : null,
+    fecha_fin: fila.fecha_fin ? String(fila.fecha_fin).slice(0, 10) : null,
     fecha_emision: fila.fecha_emision ? String(fila.fecha_emision).slice(0, 10) : null,
+    grupo: fila.grupo === null || fila.grupo === undefined ? null : fila.grupo,
+    periodo: fila.periodo || null,
+    cod_sis: fila.cod_sis || null,
+    cargo: fila.cargo || null,
+    destinatario_tipo: fila.destinatario_tipo || null,
   };
 }
 
@@ -196,10 +205,19 @@ export default async function handler(req, res) {
       `SELECT
          codigo_qr,
          nombre_estudiante,
+         ci_estudiante,
          nombre_curso,
          horas,
+         tipo_codigo,
          tipo_certificado,
-         to_char(fecha_emision, 'YYYY-MM-DD') AS fecha_emision
+         to_char(fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
+         to_char(fecha_fin, 'YYYY-MM-DD') AS fecha_fin,
+         to_char(fecha_emision, 'YYYY-MM-DD') AS fecha_emision,
+         grupo,
+         periodo,
+         cod_sis,
+         cargo,
+         destinatario_tipo
        FROM public.vista_verificacion
        WHERE codigo_qr = $1
        LIMIT 1`,

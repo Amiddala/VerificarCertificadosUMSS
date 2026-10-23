@@ -14,6 +14,16 @@ function formatearFecha(valor) {
   return valor;
 }
 
+function formatearRangoFechas(inicio, fin) {
+  const ini = formatearFecha(inicio);
+  const ffin = formatearFecha(fin);
+  if (ini === '—' && ffin === '—') return '—';
+  if (ini === ffin) return ini;
+  if (ini === '—') return ffin;
+  if (ffin === '—') return ini;
+  return `${ini} al ${ffin}`;
+}
+
 function formatearHoras(valor) {
   const horas = Number(valor);
   if (!Number.isFinite(horas) || horas <= 0) {
@@ -23,8 +33,8 @@ function formatearHoras(valor) {
   return `${horas.toLocaleString('es-BO')} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
-function obtenerTipoCertificado(valor) {
-  const tipo = String(valor || '').toLowerCase();
+function obtenerTipoCertificado(valor, tipoCodigo) {
+  const tipo = String(tipoCodigo || valor || '').toLowerCase();
 
   if (tipo.includes('aprob')) {
     return { clase: 'badge-aprobacion', texto: valor || 'Aprobación' };
@@ -32,6 +42,10 @@ function obtenerTipoCertificado(valor) {
 
   if (tipo.includes('asist')) {
     return { clase: 'badge-asistencia', texto: valor || 'Asistencia' };
+  }
+
+  if (tipo.includes('instructor')) {
+    return { clase: 'badge-neutro', texto: valor || 'Instructor' };
   }
 
   return { clase: 'badge-neutro', texto: valor || '—' };
@@ -56,7 +70,7 @@ export default function ResultadoCertificado({ certificado, codigo }) {
   const [estadoCopia, setEstadoCopia] = useState('inactivo');
   const temporizadorRef = useRef(null);
   const codigoVerificacion = certificado.codigo_qr || codigo || '';
-  const tipoCertificado = obtenerTipoCertificado(certificado.tipo_certificado);
+  const tipoCertificado = obtenerTipoCertificado(certificado.tipo_certificado, certificado.tipo_codigo);
 
   useEffect(() => {
     return () => {
@@ -116,6 +130,20 @@ export default function ResultadoCertificado({ certificado, codigo }) {
           <dd>{certificado.nombre_estudiante || '—'}</dd>
         </div>
 
+        {certificado.ci_estudiante && (
+          <div className="dato-card">
+            <dt>CI</dt>
+            <dd>{certificado.ci_estudiante}</dd>
+          </div>
+        )}
+
+        {certificado.cod_sis && (
+          <div className="dato-card">
+            <dt>Código SIS</dt>
+            <dd>{certificado.cod_sis}</dd>
+          </div>
+        )}
+
         <div className="dato-card dato-card-curso">
           <dt>Curso</dt>
           <dd>{certificado.nombre_curso || '—'}</dd>
@@ -125,6 +153,25 @@ export default function ResultadoCertificado({ certificado, codigo }) {
           <dt>Horas académicas</dt>
           <dd>{formatearHoras(certificado.horas)}</dd>
         </div>
+
+        <div className="dato-card">
+          <dt>Fechas del curso</dt>
+          <dd>{formatearRangoFechas(certificado.fecha_inicio, certificado.fecha_fin)}</dd>
+        </div>
+
+        {certificado.grupo && (
+          <div className="dato-card">
+            <dt>Grupo</dt>
+            <dd>Grupo {certificado.grupo}</dd>
+          </div>
+        )}
+
+        {certificado.periodo && (
+          <div className="dato-card">
+            <dt>Periodo</dt>
+            <dd>{certificado.periodo}</dd>
+          </div>
+        )}
 
         <div className="dato-card">
           <dt>Tipo de certificado</dt>
