@@ -1,4 +1,4 @@
-const RUTA_VERIFICACION = '/api/verificar';
+const RUTA_VERIFICACION = import.meta.env.VITE_API_VERIFICACION_URL || '/api/verificar';
 
 export class ErrorConsulta extends Error {
   constructor(mensaje, tipo = 'red') {
