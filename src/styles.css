@@ -541,10 +541,6 @@ a {
   overflow-wrap: anywhere;
 }
 
-.dato-card-codigo {
-  grid-column: 1 / -1;
-}
-
 .badge {
   display: inline-flex;
   align-items: center;
@@ -572,66 +568,6 @@ a {
   border-color: var(--color-neutro-borde);
   background: var(--color-neutro-fondo);
   color: var(--color-neutro-texto);
-}
-
-.codigo-fila {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.codigo-fila code {
-  flex: 1 1 145px;
-  min-width: 0;
-  padding: 6px 9px;
-  border: 1px solid var(--color-borde);
-  border-radius: 7px;
-  background: var(--color-superficie);
-  color: var(--color-primario-oscuro);
-  font-family: var(--fuente-mono);
-  font-size: 0.79rem;
-  font-weight: 700;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-}
-
-.boton-copiar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 44px;
-  margin-left: auto;
-  padding: 0 12px;
-  border: 1px solid var(--color-borde-fuerte);
-  border-radius: 8px;
-  background: var(--color-superficie);
-  color: var(--color-primario);
-  font-size: 0.76rem;
-  font-weight: 700;
-  line-height: 1.2;
-  transition:
-    background-color var(--transicion),
-    border-color var(--transicion),
-    color var(--transicion);
-}
-
-.boton-copiar:hover {
-  border-color: var(--color-primario-claro);
-  background: var(--color-primario-suave);
-}
-
-.boton-copiar-copiado {
-  border-color: var(--color-exito-borde);
-  background: var(--color-exito-fondo);
-  color: var(--color-exito);
-}
-
-.boton-copiar-error {
-  border-color: var(--color-error-borde);
-  background: var(--color-error-fondo);
-  color: var(--color-error);
 }
 
 .tarjeta-cargando {
@@ -764,18 +700,6 @@ a {
   margin: -1px;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-}
-
-.campo-copia-temporal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  border: 0;
-  opacity: 0;
-  pointer-events: none;
 }
 
 @keyframes girar {

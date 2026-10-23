@@ -163,10 +163,7 @@ export default function Verificar() {
         )}
 
         {resultado.estado === 'valido' && (
-          <ResultadoCertificado
-            certificado={resultado.certificado}
-            codigo={codigoNormalizado}
-          />
+          <ResultadoCertificado certificado={resultado.certificado} />
         )}
 
         {resultado.estado === 'no_encontrado' && (
